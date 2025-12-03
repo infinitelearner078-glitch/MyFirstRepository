@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Math Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator-container {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .calculator-header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .calculator-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .calculator-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .calculator-body {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .display-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            min-height: 200px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .display-line {
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: white;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5);
+            transform: scale(1.02);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .calc-btn {
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .calc-btn:active {
+            transform: translateY(1px);
+        }
+
+        .calc-btn.solve {
+            background: linear-gradient(135deg, #ff512f 0%, #f09819 100%);
+        }
+
+        .calc-btn.clear {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        .mode-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: gold;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .coefficient-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .coefficient-inputs input {
+            text-align: center;
+        }
+
+        .history-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .clear-history {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .clear-history:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .formula-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .proof-display {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .equation-inputs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-body {
+                flex-direction: column;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .coefficient-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .mode-toggle {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h1><i class="fas fa-calculator"></i> Advanced Math Calculator</h1>
+            <p>Solve equations, prove formulas, and more with animations!</p>
+        </div>
+        
+        <div class="calculator-body">
+            <div class="display-section">
+                <div class="history-title">
+                    <h2><i class="fas fa-history"></i> Calculation History</h2>
+                    <button class="clear-history" id="clearHistory">Clear</button>
+                </div>
+                <div class="display" id="display">
+                    <div class="display-line">Welcome to the Advanced Math Calculator!</div>
+                    <div class="display-line">Select a mode and start calculating.</div>
+                </div>
+                
+                <div class="instructions">
+                    <h3><i class="fas fa-lightbulb"></i> How to Use:</h3>
+                    <ul>
+                        <li>Select between different calculation modes</li>
+                        <li>For polynomials: Enter coefficients for ax²+bx+c=0</li>
+                        <li>For equations: Enter equations in natural format</li>
+                        <li>For formulas: Select a formula to see its proof</li>
+                        <li>Click Solve to calculate and see animated results</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="input-section">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="basic">Basic Calculator</button>
+                    <button class="mode-btn" data-mode="polynomial">Polynomial Solver</button>
+                    <button class="mode-btn" data-mode="equation">Equation Solver</button>
+                    <button class="mode-btn" data-mode="formula">Formula Proofs</button>
+                </div>
+                
+                <div id="basicInputs">
+                    <div class="input-group">
+                        <label for="expression"><i class="fas fa-keyboard"></i> Enter Expression:</label>
+                        <input type="text" id="expression" class="input-field" placeholder="e.g., 5+3*2, (4+6)/2, 2^3, sin(45)">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="calc-btn solve" id="solveBasic">
+                            <i class="fas fa-play"></i> Solve Expression
+                        </button>
+                        <button class="calc-btn clear" id="clearBasic">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="polynomialInputs" style="display: none;">
+                    <div class="input-group">
+                        <label><i class="fas fa-function"></i> Enter Coefficients for ax² + bx + c = 0:</label>
+                        <div class="coefficient-inputs">
+                            <input type="number" id="coeffA" class="input-field" placeholder="a" value="1">
+                            <input type="number" id="coeffB" class="input-field" placeholder="b" value="0">
+                            <input type="number" id="coeffC" class="input-field" placeholder="c" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="calc-btn solve" id="solvePolynomial">
+                            <i class="fas fa-play"></i> Solve Polynomial
+                        </button>
+                        <button class="calc-btn clear" id="clearPolynomial">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="equationInputs" style="display: none;">
+                    <div class="input-group">
+                        <label for="equation"><i class="fas fa-equals"></i> Enter Equation:</label>
+                        <input type="text" id="equation" class="input-field" placeholder="e.g., 2x + 5 = 13, x^2 - 4 = 0">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="calc-btn solve" id="solveEquation">
+                            <i class="fas fa-play"></i> Solve Equation
+                        </button>
+                        <button class="calc-btn clear" id="clearEquation">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="formulaInputs" style="display: none;">
+                    <div class="input-group">
+                        <label for="formulaSelect"><i class="fas fa-square-root-alt"></i> Select Formula to Prove:</label>
+                        <select id="formulaSelect" class="formula-select">
+                            <option value="pythagoras">Pythagorean Theorem</option>
+                            <option value="quadratic">Quadratic Formula</option>
+                            <option value="binomial">Binomial Theorem</option>
+                            <option value="circle-area">Area of a Circle</option>
+                            <option value="sum-arithmetic">Sum of Arithmetic Series</option>
+                        </select>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="calc-btn solve" id="showProof">
+                            <i class="fas fa-eye"></i> Show Proof
+                        </button>
+                    </div>
+                    
+                    <div class="proof-display" id="proofDisplay" style="display: none;">
+                        <!-- Proof will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const display = document.getElementById('display');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const basicInputs = document.getElementById('basicInputs');
+        const polynomialInputs = document.getElementById('polynomialInputs');
+        const equationInputs = document.getElementById('equationInputs');
+        const formulaInputs = document.getElementById('formulaInputs');
+        const solveBasicBtn = document.getElementById('solveBasic');
+        const clearBasicBtn = document.getElementById('clearBasic');
+        const solvePolynomialBtn = document.getElementById('solvePolynomial');
+        const clearPolynomialBtn = document.getElementById('clearPolynomial');
+        const solveEquationBtn = document.getElementById('solveEquation');
+        const clearEquationBtn = document.getElementById('clearEquation');
+        const showProofBtn = document.getElementById('showProof');
+        const expressionInput = document.getElementById('expression');
+        const equationInput = document.getElementById('equation');
+        const coeffA = document.getElementById('coeffA');
+        const coeffB = document.getElementById('coeffB');
+        const coeffC = document.getElementById('coeffC');
+        const formulaSelect = document.getElementById('formulaSelect');
+        const proofDisplay = document.getElementById('proofDisplay');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+
+        // Mode switching
+        modeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                modeButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Show appropriate inputs
+                const mode = button.getAttribute('data-mode');
+                basicInputs.style.display = mode === 'basic' ? 'block' : 'none';
+                polynomialInputs.style.display = mode === 'polynomial' ? 'block' : 'none';
+                equationInputs.style.display = mode === 'equation' ? 'block' : 'none';
+                formulaInputs.style.display = mode === 'formula' ? 'block' : 'none';
+                proofDisplay.style.display = 'none';
+                
+                addToDisplay(`Switched to ${button.textContent} mode`);
+            });
+        });
+
+        // Add content to display with animation
+        function addToDisplay(content) {
+            const line = document.createElement('div');
+            line.className = 'display-line';
+            line.textContent = content;
+            display.appendChild(line);
+            
+            // Scroll to bottom
+            display.scrollTop = display.scrollHeight;
+            
+            // Limit history to 20 lines
+            const lines = display.querySelectorAll('.display-line');
+            if (lines.length > 20) {
+                display.removeChild(lines[0]);
+            }
+        }
+
+        // Basic calculator functionality
+        solveBasicBtn.addEventListener('click', () => {
+            const expression = expressionInput.value.trim();
+            if (!expression) {
+                addToDisplay('Error: Please enter an expression');
+                return;
+            }
+            
+            try {
+                // Replace ^ with ** for exponentiation
+                const evalExpression = expression
+                    .replace(/\^/g, '**')
+                    .replace(/sin\(/g, 'Math.sin(Math.PI/180*')
+                    .replace(/cos\(/g, 'Math.cos(Math.PI/180*')
+                    .replace(/tan\(/g, 'Math.tan(Math.PI/180*')
+                    .replace(/log\(/g, 'Math.log10(')
+                    .replace(/ln\(/g, 'Math.log(')
+                    .replace(/sqrt\(/g, 'Math.sqrt(')
+                    .replace(/pi/g, 'Math.PI')
+                    .replace(/e/g, 'Math.E');
+                
+                // Use Function constructor for safe evaluation
+                const result = Function('"use strict"; return (' + evalExpression + ')')();
+                
+                addToDisplay(`Expression: ${expression} = ${result}`);
+                expressionInput.value = '';
+            } catch (error) {
+                addToDisplay(`Error: Invalid expression - ${expression}`);
+            }
+        });
+
+        clearBasicBtn.addEventListener('click', () => {
+            expressionInput.value = '';
+            addToDisplay('Basic calculator cleared');
+        });
+
+        // Polynomial solver functionality
+        solvePolynomialBtn.addEventListener('click', () => {
+            const a = parseFloat(coeffA.value);
+            const b = parseFloat(coeffB.value);
+            const c = parseFloat(coeffC.value);
+            
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                addToDisplay('Error: Please enter valid coefficients');
+                return;
+            }
+            
+            addToDisplay(`Solving: ${a}x² + ${b}x + ${c} = 0`);
+            
+            // Calculate discriminant
+            const discriminant = b * b - 4 * a * c;
+            
+            if (discriminant > 0) {
+                const root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                addToDisplay(`Two real roots: x = ${root1.toFixed(4)} and x = ${root2.toFixed(4)}`);
+            } else if (discriminant === 0) {
+                const root = -b / (2 * a);
+                addToDisplay(`One real root: x = ${root.toFixed(4)}`);
+            } else {
+                const realPart = (-b / (2 * a)).toFixed(4);
+                const imaginaryPart = (Math.sqrt(-discriminant) / (2 * a)).toFixed(4);
+                addToDisplay(`Two complex roots: x = ${realPart} + ${imaginaryPart}i and x = ${realPart} - ${imaginaryPart}i`);
+            }
+        });
+
+        clearPolynomialBtn.addEventListener('click', () => {
+            coeffA.value = '1';
+            coeffB.value = '0';
+            coeffC.value = '0';
+            addToDisplay('Polynomial inputs cleared');
+        });
+
+        // Equation solver functionality
+        solveEquationBtn.addEventListener('click', () => {
+            const equation = equationInput.value.trim();
+            if (!equation) {
+                addToDisplay('Error: Please enter an equation');
+                return;
+            }
+            
+            try {
+                // Simple equation parser for demonstration
+                if (equation.includes('=')) {
+                    const sides = equation.split('=');
+                    if (sides.length !== 2) {
+                        throw new Error('Invalid equation format');
+                    }
+                    
+                    // For demonstration, we'll solve some common equation types
+                    if (equation.includes('x^2') || equation.includes('x²')) {
+                        // Quadratic equation
+                        solveQuadraticEquation(equation);
+                    } else if (equation.includes('x')) {
+                        // Linear equation
+                        solveLinearEquation(equation);
+                    } else {
+                        addToDisplay('Error: Equation must contain variable x');
+                    }
+                } else {
+                    addToDisplay('Error: Equation must contain = sign');
+                }
+            } catch (error) {
+                addToDisplay(`Error: ${error.message}`);
+            }
+        });
+
+        clearEquationBtn.addEventListener('click', () => {
+            equationInput.value = '';
+            addToDisplay('Equation input cleared');
+        });
+
+        // Formula proof functionality
+        showProofBtn.addEventListener('click', () => {
+            const selectedFormula = formulaSelect.value;
+            showFormulaProof(selectedFormula);
+        });
+
+        // Clear history
+        clearHistoryBtn.addEventListener('click', () => {
+            display.innerHTML = '';
+            addToDisplay('History cleared. Ready for new calculations!');
+        });
+
+        // Equation solving functions
+        function solveLinearEquation(equation) {
+            const sides = equation.split('=');
+            let left = sides[0].trim();
+            let right = sides[1].trim();
+            
+            // Move all terms to left side
+            if (right !== '0') {
+                left = `(${left}) - (${right})`;
+                right = '0';
+            }
+            
+            // For demonstration, we'll use a simple approach
+            // In a real application, you would use a proper equation parser
+            
+            // Extract coefficient of x and constant
+            const xMatch = left.match(/([-+]?\d*)\s*x/);
+            const constantMatch = left.match(/([-+]?\d+)(?!.*x)/);
+            
+            if (!xMatch) {
+                addToDisplay('Error: No variable x found in equation');
+                return;
+            }
+            
+            let coefficient = 1;
+            if (xMatch[1] === '-') coefficient = -1;
+            else if (xMatch[1] === '+') coefficient = 1;
+            else if (xMatch[1]) coefficient = parseFloat(xMatch[1]);
+            
+            let constant = 0;
+            if (constantMatch) constant = parseFloat(constantMatch[1]);
+            
+            if (coefficient === 0) {
+                addToDisplay('Error: Coefficient of x cannot be zero');
+                return;
+            }
+            
+            const solution = -constant / coefficient;
+            addToDisplay(`Linear equation solution: x = ${solution}`);
+        }
+
+        function solveQuadraticEquation(equation) {
+            // For demonstration, we'll extract coefficients using regex
+            // In a real application, you would use a proper equation parser
+            
+            const sides = equation.split('=');
+            let left = sides[0].trim();
+            
+            // Standard form: ax² + bx + c = 0
+            const aMatch = left.match(/([-+]?\d*)\s*x\s*[\^²2]/);
+            const bMatch = left.match(/([-+]?\d*)\s*x(?!\s*[\^²2])/);
+            const cMatch = left.match(/([-+]?\d+)(?!.*x)/);
+            
+            let a = 1, b = 0, c = 0;
+            
+            if (aMatch && aMatch[1]) {
+                if (aMatch[1] === '-') a = -1;
+                else if (aMatch[1] === '+') a = 1;
+                else a = parseFloat(aMatch[1]);
+            }
+            
+            if (bMatch && bMatch[1]) {
+                if (bMatch[1] === '-') b = -1;
+                else if (bMatch[1] === '+') b = 1;
+                else b = parseFloat(bMatch[1]);
+            }
+            
+            if (cMatch) c = parseFloat(cMatch[1]);
+            
+            addToDisplay(`Solving: ${a}x² + ${b}x + ${c} = 0`);
+            
+            // Calculate discriminant
+            const discriminant = b * b - 4 * a * c;
+            
+            if (discriminant > 0) {
+                const root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                addToDisplay(`Two real roots: x = ${root1.toFixed(4)} and x = ${root2.toFixed(4)}`);
+            } else if (discriminant === 0) {
+                const root = -b / (2 * a);
+                addToDisplay(`One real root: x = ${root.toFixed(4)}`);
+            } else {
+                const realPart = (-b / (2 * a)).toFixed(4);
+                const imaginaryPart = (Math.sqrt(-discriminant) / (2 * a)).toFixed(4);
+                addToDisplay(`Two complex roots: x = ${realPart} + ${imaginaryPart}i and x = ${realPart} - ${imaginaryPart}i`);
+            }
+        }
+
+        // Formula proof display
+        function showFormulaProof(formula) {
+            proofDisplay.style.display = 'block';
+            
+            switch(formula) {
+                case 'pythagoras':
+                    proofDisplay.innerHTML = `PYTHAGOREAN THEOREM PROOF:
+                    
+Theorem: In a right triangle, a² + b² = c²
+                    
+Proof:
+1. Consider a square with side length (a+b)
+2. Inside this square, form a smaller square with side length c
+3. The area of the large square is (a+b)² = a² + 2ab + b²
+4. The area of the small square is c²
+5. The area of the four right triangles is 4 × (½ab) = 2ab
+6. So: a² + 2ab + b² = c² + 2ab
+7. Therefore: a² + b² = c²
+                    
+Q.E.D.`;
+                    break;
+                    
+                case 'quadratic':
+                    proofDisplay.innerHTML = `QUADRATIC FORMULA PROOF:
+                    
+Formula: x = [-b ± √(b² - 4ac)] / 2a
+                    
+Proof:
+1. Start with: ax² + bx + c = 0
+2. Divide by a: x² + (b/a)x + c/a = 0
+3. Complete the square: x² + (b/a)x = -c/a
+4. Add (b/2a)² to both sides: x² + (b/a)x + (b/2a)² = -c/a + (b/2a)²
+5. Left side is a perfect square: (x + b/2a)² = -c/a + b²/4a²
+6. Combine right side: (x + b/2a)² = (b² - 4ac)/4a²
+7. Take square root: x + b/2a = ±√(b² - 4ac)/2a
+8. Solve for x: x = [-b ± √(b² - 4ac)] / 2a
+                    
+Q.E.D.`;
+                    break;
+                    
+                case 'binomial':
+                    proofDisplay.innerHTML = `BINOMIAL THEOREM PROOF:
+                    
+Theorem: (a+b)ⁿ = Σ[k=0 to n] C(n,k) a^(n-k) b^k
+                    
+Proof by Induction:
+1. Base case: n=0, (a+b)⁰ = 1 = C(0,0)a⁰b⁰ ✓
+2. Assume true for n: (a+b)ⁿ = Σ[k=0 to n] C(n,k) a^(n-k) b^k
+3. For n+1: (a+b)^(n+1) = (a+b)(a+b)ⁿ
+4. = (a+b) Σ[k=0 to n] C(n,k) a^(n-k) b^k
+5. = Σ[k=0 to n] C(n,k) a^(n+1-k) b^k + Σ[k=0 to n] C(n,k) a^(n-k) b^(k+1)
+6. Change index in second sum: = Σ[k=0 to n] C(n,k) a^(n+1-k) b^k + Σ[j=1 to n+1] C(n,j-1) a^(n+1-j) b^j
+7. Combine sums: = a^(n+1) + Σ[k=1 to n] [C(n,k) + C(n,k-1)] a^(n+1-k) b^k + b^(n+1)
+8. Using Pascal's identity: C(n,k) + C(n,k-1) = C(n+1,k)
+9. Therefore: (a+b)^(n+1) = Σ[k=0 to n+1] C(n+1,k) a^(n+1-k) b^k
+                    
+Q.E.D.`;
+                    break;
+                    
+                case 'circle-area':
+                    proofDisplay.innerHTML = `AREA OF A CIRCLE PROOF:
+                    
+Formula: A = πr²
+                    
+Proof by Integration:
+1. Consider a circle with radius r centered at origin
+2. Equation: x² + y² = r²
+3. Solve for y: y = ±√(r² - x²)
+4. The area is 2 × ∫[-r to r] √(r² - x²) dx
+5. Use trigonometric substitution: x = r sinθ, dx = r cosθ dθ
+6. When x = -r, θ = -π/2; when x = r, θ = π/2
+7. The integral becomes: 2 × ∫[-π/2 to π/2] √(r² - r²sin²θ) r cosθ dθ
+8. = 2 × ∫[-π/2 to π/2] r cosθ × r cosθ dθ
+9. = 2r² × ∫[-π/2 to π/2] cos²θ dθ
+10. Using identity: cos²θ = (1 + cos2θ)/2
+11. = 2r² × ∫[-π/2 to π/2] (1 + cos2θ)/2 dθ
+12. = r² × [θ + sin2θ/2] from -π/2 to π/2
+13. = r² × [(π/2 + 0) - (-π/2 + 0)] = r² × π
+14. Therefore: A = πr²
+                    
+Q.E.D.`;
+                    break;
+                    
+                case 'sum-arithmetic':
+                    proofDisplay.innerHTML = `SUM OF ARITHMETIC SERIES PROOF:
+                    
+Formula: S = n/2 × (a₁ + aₙ) or S = n/2 × [2a₁ + (n-1)d]
+                    
+Proof:
+1. Let S = a₁ + a₂ + ... + aₙ
+2. Also S = aₙ + aₙ₋₁ + ... + a₁
+3. Add both equations: 2S = (a₁ + aₙ) + (a₂ + aₙ₋₁) + ... + (aₙ + a₁)
+4. Since it's arithmetic: a₂ + aₙ₋₁ = (a₁ + d) + (aₙ - d) = a₁ + aₙ
+5. Similarly, each pair sums to a₁ + aₙ
+6. There are n such pairs
+7. Therefore: 2S = n(a₁ + aₙ)
+8. So: S = n/2 × (a₁ + aₙ)
+9. Since aₙ = a₁ + (n-1)d, we also have: S = n/2 × [2a₁ + (n-1)d]
+                    
+Q.E.D.`;
+                    break;
+            }
+            
+            addToDisplay(`Displayed proof for: ${formulaSelect.options[formulaSelect.selectedIndex].text}`);
+        }
+
+        // Add some initial examples
+        addToDisplay('Try: 2+3*4 or solve x²+5x+6=0');
+    </script>
+</body>
+</html>
